@@ -1,0 +1,10 @@
+name: base
+dataset:
+  data_path: /vols/opig/users/durant/pose_classification/posetriager/synthetic_data
+  train_frac: 1
+  train_df: /vols/opig/users/durant/pose_classification/posetriager/synthetic_data/train_debug.csv
+  val_df: /vols/opig/users/durant/pose_classification/posetriager/synthetic_data/val_debug.csv
+params:
+  radius: 6
+  edge_radius: 10
+loss: default_loss

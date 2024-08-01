@@ -1,0 +1,8 @@
+k: 32
+dim_input: 12
+save_path: test
+learning_rate: 0.0008
+weight_decay: 0.0001
+only_save_best_models: False
+num_layers: 48
+  
