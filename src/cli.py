@@ -8,12 +8,13 @@ from src.train_object import TrainObject
 from src.utils.config import get_object_from_registry, process_config, register_configs
 from src.datamodules.datamodule import registry as datamodules_registry
 
+import wandb
+from wandb.errors import CommError
 
 def setup_wandb(config: DictConfig):
     # Pass in wandb.init(config=) argument to get the nice 'x.y.0.z' hparams logged
     # Can pass in config_exclude_keys='wandb' to remove certain groups
-    import wandb
-    from wandb.errors import CommError
+
 
     get_logger = lambda final_conf: WandbLogger(
         config=OmegaConf.to_container(final_conf, resolve=True),
@@ -70,4 +71,8 @@ def hydra_main():
 
 
 if __name__ == "__main__":
-    hydra_main()
+    try:
+        hydra_main()
+    finally:
+        wandb.finish()
+        # should be called even upon SIGTERM, and ensure correct shutdown
