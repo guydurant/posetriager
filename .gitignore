@@ -172,6 +172,12 @@ checkpoints*
 *.ckpt
 run_scripts/
 logs/
-
 synthetic_data/
+slurm*
 processed_data/
+posetriager/
+remediation/
+baseline_models/
+calibration/
+analysis/
+*.sh
