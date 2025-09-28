@@ -1,8 +1,6 @@
 from collections import defaultdict
-
 import lightning as L
 import torch
-
 from src.models.posetriager import PoseTriager
 from src.utils.config import get_logger, get_object_from_registry
 from src.tasks.base import task_registry

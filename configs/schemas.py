@@ -1,8 +1,6 @@
 from dataclasses import dataclass, field
 from typing import List, Optional, Union
-
 from omegaconf import MISSING
-
 from src.utils.constants import MODULE_DEFAULT_LOSS
 
 INTERPOLATED_FROM_PARENT = MISSING

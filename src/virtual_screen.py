@@ -1,28 +1,13 @@
 import os
 from src.models.posetriager import PoseTriager
-from src.datamodules.datamodule import PoseDataset
 from omegaconf import DictConfig
-from pytorch_lightning import Trainer
 import torch
 from torch import nn
 import hydra
 import wandb
-from torch_geometric.loader import DataLoader
-from torch_geometric.data import Batch, Data
 import pandas as pd
 from tqdm import tqdm
 import os
-from sklearn.metrics import (
-    matthews_corrcoef as matt_corr,
-    f1_score,
-    precision_score,
-    recall_score,
-    roc_auc_score as roc_auc,
-    mean_absolute_error as mae,
-    mean_squared_error as mse,
-    r2_score,
-    root_mean_squared_error,
-)
 from rdkit import RDLogger
 RDLogger.DisableLog("rdApp.*")
 from src.inference import get_dataloader
@@ -131,8 +116,6 @@ def main(config: DictConfig):
         inchikeys_list = inchikeys_list[:1000]
     else:
         inchikeys_list = set()
-    # for i, row in tqdm(data_df.iterrows(), total=len(data_df)):
-    #     single_virtual_screen_from_config(config, row, "/".join(row["results"].split("/")[:-1])+f"/{model_name}_{row["results"].split("/")[-1]}")
     Parallel(n_jobs=30)(delayed(single_virtual_screen_from_config)(config, row, "/".join(row["results"].split("/")[:-1])+f"/{model_name}_{row["results"].split("/")[-1]}", inchikeys_list=inchikeys_list) for i, row in tqdm(data_df.iterrows(), total=len(data_df)))
 
 

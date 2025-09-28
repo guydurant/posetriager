@@ -12,6 +12,5 @@ loss: default_loss
 metrics:
   - mae_loss
   - default_loss
-  # - pearson_r
   - mse_loss
   - matthews_correlation

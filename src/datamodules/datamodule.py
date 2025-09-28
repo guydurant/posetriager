@@ -8,7 +8,6 @@ from pathlib import Path
 from src.datamodules.base_module import BaseDataModule
 from src.datamodules.complex_features import (
     concat_structs,
-    extract_coords,
     make_box,
     generate_edges,
     make_bit_vector,

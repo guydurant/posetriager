@@ -9,7 +9,6 @@ def concat_structs(
     rec_struct,
     lig_struct,
     n_features,
-    # min_lig_rotation=0, parsers=None, extended=False
 ):
     """Concatenate the receptor and ligand parquet structures."""
     rec_struct.types += n_features  # + extended * 8

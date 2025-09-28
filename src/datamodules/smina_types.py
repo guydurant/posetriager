@@ -1,24 +1,12 @@
-import argparse
-import multiprocessing as mp
-import urllib
 from collections import defaultdict
 from pathlib import Path
-from urllib.error import HTTPError
-from urllib.request import urlopen
-
 import pandas as pd
 import struct
-
-# from openbabel import openbabel
-# from openbabel import pybel
 import numpy as np
 import rdkit
 from rdkit import Chem
-import os
 from dataclasses import dataclass
 from src.datamodules.constants import ADNAMES, ATOM_TYPES
-
-# from pymol import cmd
 
 
 @dataclass
