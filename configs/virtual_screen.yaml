@@ -1,0 +1,53 @@
+accelerator: "cpu"
+# checkpoint: /vols/opig/users/durant/pose_classification/posetriager/posetriager/1n4bxrpe/checkpoints/25-89258.ckpt
+# data_path: /vols/opig/users/durant/pose_classification/datasets/posebuster_volume_overlap/
+# data_df: /vols/opig/users/durant/pose_classification/datasets/posebuster_volume_overlap/posebuster_volume_overlap.csv
+# out_df: /vols/opig/users/durant/pose_classification/posetriager/analysis/results/posebuster_volume_overlap_results.csv
+# batch_size: 10
+# task: pbvalidity
+# checkpoint: /vols/opig/users/durant/pose_classification/posetriager/posetriager/9ku1kz24/checkpoints/last.ckpt
+# data_path: /vols/opig/users/durant/pose_classification/datasets/posebuster_lowmid_low_interactions_diff
+# data_df: /vols/opig/users/durant/pose_classification/datasets/posebuster_lowmid_low_interactions_diff/posebuster_lowmid_low_interactions_diff.csv
+# out_df: analysis/results/posebuster_lowmid_low_interactions_diff_results.csv
+# batch_size: 10
+# task: interaction_similarity
+# checkpoint: /vols/opig/users/durant/pose_classification/posetriager/posetriager/mhg9vzuv/checkpoints/18-96368.ckpt
+# data_path: /vols/opig/users/durant/pose_classification/posetriager/synthetic_data/
+# data_df: /vols/opig/users/durant/pose_classification/posetriager/synthetic_data/test_casf_2016_pbclassify.csv
+# out_df: analysis/results/test_casf_2016_pbclassify_results.csv
+# batch_size: 10
+# task: pbclassify
+# now for casf 2016
+
+# checkpoint: /vols/opig/users/durant/pose_classification/posetriager/posetriager/e0ne54bo/checkpoints/last.ckpt
+# data_df: /vols/opig/users/durant/pose_classification/datasets/casf_2016/casf_2016_rmsds_df_scoring.csv
+# data_path: /vols/opig/users/durant/pose_classification/datasets/casf_2016/decoys_docking/
+# out_df: analysis/results/casf_2016_rmsds_df_scoring_results.csv
+# batch_size: 10
+# task: pbclassify
+
+#OLD MODEL
+# # for real tests
+# checkpoint: /vols/opig/users/durant/pose_classification/posetriager/posetriager/mhg9vzuv/checkpoints/18-96368.ckpt
+# data_path: ""
+# data_df: /vols/opig/users/durant/DOCKING/posetriager_benchmarks/diffdock_astex_poses.csv
+# out_df: analysis/results/diffdock_astex_poses_pbclassify_results.csv
+# batch_size: 10
+# task: pbclassify
+# af2 tests
+# checkpoint: /vols/opig/users/durant/pose_classification/posetriager/posetriager/mhg9vzuv/checkpoints/18-96368.ckpt
+# data_path: ""
+# data_df: /vols/opig/users/durant/DOCKING/posetriager_benchmarks/smina_posebusters_af2_poses.csv
+# out_df: analysis/results/smina_posebusters_af2_poses_pbclassify_results.csv
+# batch_size: 10
+# task: pbclassify
+
+# NEW MODEL toaowlkd
+checkpoint: /vols/opig/users/durant/pose_classification/posetriager/posetriager/toaowlkd/checkpoints/22-117691.ckpt
+data_path: ""
+data_df: /vols/opig/users/durant/DOCKING/posetriager_benchmarks/diffdock_astex_poses.csv
+# out_df: analysis/results/diffdock_astex_poses_pbclassify_results.csv
+batch_size: 10
+task: pbclassify
+inchikeys_list: null
+# data_cache: /data/localhost/not-backed-up/scratch/durant/processed_data/pbclassify_diffdock_astex_poses
