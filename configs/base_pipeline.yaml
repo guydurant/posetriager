@@ -4,10 +4,13 @@ defaults:
   - /task: default
   - /datamodule: default
 
-scheduler: null
+scheduler:
+  name: cosine
+  T_max: 100
+  eta_min: 1e-20
 
 loader:
-  batch_size: 5
+  batch_size: 20
 
 optimizer:
   lr: 6e-4
@@ -15,17 +18,16 @@ optimizer:
 
 trainer:
   devices: auto
-  accelerator: cpu
-  max_epochs: 1000
-  gradient_clip_val: null
-  log_every_n_steps: 10
-  val_check_interval: 1. # val every n batches
-  limit_val_batches: 10
+  accelerator: cuda
+  max_epochs: 40
+  gradient_clip_val: 5.0
+  log_every_n_steps: 100
+  val_check_interval: 1.0 # val every n batches
 
 callbacks:
   model_checkpoint:
-    monitor: "val/loss" # name of the logged metric which determines when model is improving
-    mode: "max" # can be "max" or "min"
+    monitor: "val/mse_loss" # name of the logged metric which determines when model is improving
+    mode: "min" # can be "max" or "min"
     save_top_k: 1 # save k best models (determined by above metric)
     save_last: True # additionaly always save model from last epoch
     auto_insert_metric_name: False
@@ -33,6 +35,13 @@ callbacks:
 
   learning_rate_monitor:
     logging_interval: "step"
+  
+  early_stopping:
+    monitor: "val/mse_loss"
+    mode: "min"
+    patience: 3
+    verbose: True
+
 
 train_type:
   name: "train"

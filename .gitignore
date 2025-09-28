@@ -181,3 +181,4 @@ baseline_models/
 calibration/
 analysis/
 *.sh
+*.tar.gz

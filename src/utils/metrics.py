@@ -26,6 +26,17 @@ def mse(outs, y, sample_len=None, reduction="mean"):
     return F.mse_loss(*get_nonzero_batch_vals(outs, y, sample_len), reduction=reduction)
 
 
+def bcelogits(outs, y, sample_len=None, reduction="mean"):
+    if len(y.shape) < len(outs.shape):
+        assert outs.shape[-1] == 1
+        outs = outs.squeeze(-1)
+    if sample_len is None:
+        return F.binary_cross_entropy_with_logits(outs, y)
+    return F.binary_cross_entropy_with_logits(
+        *get_nonzero_batch_vals(outs, y, sample_len), reduction=reduction
+    )
+
 output_metric_fns = {
     "mse": mse,
+    "bcelogits": bcelogits,
 }

@@ -56,7 +56,7 @@ def allow_mutable_config_with_pop(config: DictConfig | Any):
 
 def process_config(config: DictConfig) -> DictConfig:  #
     # validate config, but want as dict, probably a better way to do this?
-    _config: configs.schemas.Config = OmegaConf.to_object(config)
+    _: configs.schemas.Config = OmegaConf.to_object(config)
 
     log = get_logger()
 

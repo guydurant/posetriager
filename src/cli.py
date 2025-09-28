@@ -11,10 +11,10 @@ from src.datamodules.datamodule import registry as datamodules_registry
 import wandb
 from wandb.errors import CommError
 
+
 def setup_wandb(config: DictConfig):
     # Pass in wandb.init(config=) argument to get the nice 'x.y.0.z' hparams logged
     # Can pass in config_exclude_keys='wandb' to remove certain groups
-
 
     get_logger = lambda final_conf: WandbLogger(
         config=OmegaConf.to_container(final_conf, resolve=True),

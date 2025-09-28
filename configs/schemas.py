@@ -34,7 +34,7 @@ class TrainerConfig:
     limit_train_batches: float = (
         1.0  # train on full dataset, can be used to toggle quick run
     )
-    limit_val_batches: Union[float, int] = 2
+    limit_val_batches: Union[float, int] = 1.0
 
 
 @dataclass
@@ -67,17 +67,26 @@ class CheckpointConfig:
 class LRMConfig:
     logging_interval: str = "step"  # Literal["step","epoch"]
 
+@dataclass
+class EarlyStoppingConfig:
+    monitor: str = "val/mse_loss"
+    mode: str = "min"
+    patience: int = 3
+    verbose: bool = True
 
 @dataclass
 class CallbackConfig:
     model_checkpoint: CheckpointConfig = field(default_factory=CheckpointConfig)
     learning_rate_monitor: LRMConfig = field(default_factory=LRMConfig)
+    early_stopping: EarlyStoppingConfig = field(default_factory=EarlyStoppingConfig)
+
 
 
 @dataclass
 class DataModuleConfig:
     name: str = "datamodule"
     dataset: dict = field(default_factory=dict)
+    data_cache: str = "processed_data/test"
     params: dict = field(default_factory=dict)
     loss: str = MODULE_DEFAULT_LOSS
     loss_kwargs: dict = field(default_factory=dict)

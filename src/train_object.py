@@ -67,7 +67,7 @@ class TrainObject(L.LightningModule):
             targets=batch.y.float(),
             prefix=prefix,
         )
-        self._log_dict(metrics, on_step=on_step)
+        self._log_dict(metrics, on_step=on_step, batch_size=batch.num_graphs)
         return loss
 
     def training_step(self, batch, batch_idx):
@@ -76,7 +76,10 @@ class TrainObject(L.LightningModule):
         self._log_dict(loss_epoch, on_epoch=False, prog_bar=False)
         return loss
 
+    
     def validation_step(self, batch, batch_idx):
+        if batch is None:
+            return
         return self.step(batch, prefix="val")
 
     def get_scheduler(self, optimizer):
@@ -130,6 +133,10 @@ class TrainObject(L.LightningModule):
 
         if self.hparams.scheduler is None:
             return optimizer
-        lr_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR
+        lr_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
+            optimizer,
+            T_max=self.hparams.scheduler.T_max,
+            eta_min=self.hparams.scheduler.eta_min,
+        )
 
         return [optimizer], [lr_scheduler]

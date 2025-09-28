@@ -92,7 +92,7 @@ class EGNNLayer(nn.Module):
         row, col = edge_index
         trans = coord_diff * self.coord_mlp(edge_feat)
         agg = self.unsorted_segment_mean(trans, row, num_segments=coord.size(0))
-        coord += agg
+        coord = coord + agg
         self.intermediate_coords = to_numpy(coord)
         return coord
 

@@ -4,6 +4,7 @@ pandas
 scikit-learn
 torch
 torchvision
-umap-learn
 wandb
 tqdm
+torch_geometric
+rdkit

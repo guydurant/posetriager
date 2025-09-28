@@ -7,14 +7,18 @@ from urllib.error import HTTPError
 from urllib.request import urlopen
 
 import pandas as pd
+import struct
 
 # from openbabel import openbabel
 # from openbabel import pybel
+import numpy as np
 import rdkit
 from rdkit import Chem
 import os
 from dataclasses import dataclass
 from src.datamodules.constants import ADNAMES, ATOM_TYPES
+
+# from pymol import cmd
 
 
 @dataclass
@@ -36,15 +40,28 @@ class SminaAtomType:
         return f"{self.name} {self.radius} {self.depth} {self.solvation} {self.volume} {self.covalent_radius} {self.xs_radius} {self.xs_hydrophobe} {self.xs_donor} {self.xs_acceptor} {self.ad_heteroatom}"
 
 
+def rdkit_read_pdbqt_to_mol(file):
+    with open(file, "r") as f:
+        lines = f.readlines()
+    pdb_block = ""
+    for line in lines:
+        if line.startswith("ATOM") or line.startswith("HETATM"):
+            pdb_block += line[:66] + "\n"  # Truncate to remove charges and extra fields
+    pdb_block += "END\n"
+    return Chem.MolFromPDBBlock(pdb_block, sanitize=False)
+    
+
 class StructuralFileParser:
     def __init__(self):
         self.atom_type_data = []
         self.type_map = {}
         self.rdkit_funcs = {
             ".pdb": Chem.MolFromPDBFile,
-            ".sdf": Chem.MolFromMolFile,
+            ".sdf": Chem.SDMolSupplier,
             ".mol2": Chem.MolFromMol2File,
             ".mol": Chem.MolFromMolFile,
+            ".pdbqt": rdkit_read_pdbqt_to_mol,
+            None: Chem.MolFromPDBBlock,
         }
         lines = ATOM_TYPES.split("\n")
         adnames = ADNAMES
@@ -57,8 +74,14 @@ class StructuralFileParser:
         self.type_map = self.get_types_map()
         self.n_features = len(set(self.type_map.values())) + 1
 
-    def read_file(self, infile):
+    def read_file(self, infile, num=0):
+        if type(infile) == rdkit.Chem.rdchem.Mol:
+            return infile
         ext = Path(infile).suffix
+        if ext == ".pdb":
+            return self.rdkit_funcs[ext](str(infile), sanitize=False)
+        elif ext == ".sdf":
+            return self.rdkit_funcs[ext](str(infile), removeHs=False)[num]
         return self.rdkit_funcs[ext](str(infile))
 
     def get_types_map(self):
@@ -142,16 +165,6 @@ class StructuralFileParser:
         atomic_number = rdkit_atom.GetAtomicNum()
         num_to_name = {1: "HD", 6: "A", 7: "NA", 8: "OA", 16: "SA"}
 
-        # # Default fn returns True, otherwise inspect atom properties
-        # condition_fns = defaultdict(lambda: lambda: True)
-        # condition_fns.update(
-        #     {
-        #         6: rdkit_atom.GetIsAromatic,
-        #         7: self.get_is_hbond_acceptor(rdkit_atom),
-        #         16: self.get_is_hbond_acceptor(rdkit_atom),
-        #     }
-        # )
-
         # Get symbol
         ename = rdkit_atom.GetSymbol()
 
@@ -188,11 +201,6 @@ class StructuralFileParser:
                 # convert ad names to smina types
                 if string == type_info.adname:
                     return type_info.name
-            # generic metal
-            # if string in self.non_ad_metal_names:
-            #     return "GenericMetal"
-            # # if nothing else found --> generic metal
-            # return "GenericMetal"
             return "NumTypes"
 
         else:
@@ -227,12 +235,39 @@ class StructuralFileParser:
 
         return xs, ys, zs, types, atomic_nums
 
-    def rdkitmol_to_df(self, input_file, mol_type="ligand"):
+    def gninatype_to_df(self, input_file, mol_type="ligand"):
+        coords = []
+        types = []
+        bp_int = 0 if mol_type == 'ligand' else 1
+        n_atom_types = 14
+        with open(input_file, 'rb') as f:
+            size = struct.calcsize("fffi")
+            bainfo = f.read(size)
+            while bainfo != b'':
+                ainfo = struct.unpack("fffi", bainfo)
+                coords.append(ainfo[:-1])
+                type_int = ainfo[-1] + (bp_int * n_atom_types)
+                types.append(type_int)
+                bainfo = f.read(size)
+
+        types = np.array(types)
+        coords = np.array(coords)
+
+        df = pd.DataFrame(coords, columns=['x', 'y', 'z'])
+        df['types'] = types
+        df['bp'] = bp_int
+        # just set to avoid being hydrogens
+        df["atomic_number"] = np.array([4] * len(coords))
+        return df
+
+    def rdkitmol_to_df(self, input_file, mol_type="ligand", num=0):
         if type(input_file) == str:
             input_file = Path(input_file)
         if input_file.suffix == ".parquet":
             return pd.read_parquet(input_file)
-        mol = self.read_file(input_file)
+        if input_file.suffix == ".gninatypes":
+            return self.gninatype_to_df(input_file, mol_type=mol_type)
+        mol = self.read_file(input_file, num=num)
         xs, ys, zs, types, atomic_nums = self.get_coords_and_types_info(mol)
         df = pd.DataFrame()
         df["x"], df["y"], df["z"] = xs, ys, zs

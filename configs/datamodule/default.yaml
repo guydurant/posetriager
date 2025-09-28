@@ -4,7 +4,14 @@ dataset:
   train_frac: 1
   train_df: /vols/opig/users/durant/pose_classification/posetriager/synthetic_data/train_debug.csv
   val_df: /vols/opig/users/durant/pose_classification/posetriager/synthetic_data/val_debug.csv
+data_cache: processed_data/test
 params:
   radius: 6
   edge_radius: 10
 loss: default_loss
+metrics:
+  - mae_loss
+  - default_loss
+  # - pearson_r
+  - mse_loss
+  - matthews_correlation
